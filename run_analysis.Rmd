@@ -1,0 +1,55 @@
+---
+title: "run_analysis"
+author: "issa fall"
+date: "December 23, 2015"
+output: html_document
+        
+---
+##Code Book
+```{r,echo=TRUE}
+dir("C:/Users/ndeye amy fall/Desktop/Rstudio/UCI HAR Dataset")
+library(dplyr)
+library(plyr)
+library(tidyr)
+library(reshape2)
+files<-list.files("UCI HAR Dataset")
+files
+files[5]
+```
+##Appending the files
+```{r,echo=TRUE}
+list.files("UCI HAR Dataset")
+files_full<-list.files("UCI HAR Dataset",full.names = TRUE)
+files_full
+files_full[1]
+con<-file("UCI HAR Dataset/activity_labels.txt","rt")
+activity_labels<-read.table(con)
+head(activity_labels)
+str(activity_labels)
+con2<-file("UCI HAR Dataset/features.txt","rt")
+features<-read.table(con2)
+head(features)
+str(features)
+con4<-file("UCI HAR Dataset/features_info.txt","rt")
+features_info<-readLines(con4)
+head(features_info)
+```
+##Appending the files and using split-apply-combine(SAC) method for data frames
+```{r,echo=TRUE}
+
+list.files("UCI HAR Dataset/test")
+list.files("UCI HAR Dataset/train")
+list.files("UCI HAR Dataset/inertial Signals")
+files_full_train<-list.files("UCI HAR Dataset/train",full.names = TRUE)
+files_full_train
+files_full_test<-list.files("UCI HAR Dataset/test",full.names = TRUE)
+files_full_test
+files_full_inertial<-list.files("UCI HAR Dataset/inertial Signals",full.names = TRUE)
+files_full_inertial
+con1<-read.table(files_full_inertial[1])
+head(con1,10)
+con3<-read.table(files_full_test[2])
+head(con3)
+
+
+
