@@ -1,0 +1,75 @@
+---
+title: "movies"
+author: "issa fall"
+date: "November 21, 2015"
+output: html_document
+---
+
+##Movies
+```{r,echo=TRUE}
+library(datasets)
+library(plyr)
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+data("movies")
+head(movies)
+str(movies)
+movies_df<-tbl_df(movies)
+head(movies_df)
+movies_with_budget<-filter(movies_df, !is.na(budget))
+head(movies_with_budget)
+head(filter(movies, Documentary == 1))
+head(filter(movies, Documentary == 1)%>%nrow())
+good_comedies<-filter(movies, rating > 9, Comedy == 1)
+dim(good_comedies)
+```
+##Let's say we only want highly rated comedies,which a lot of people have watched after year 2000
+```{r,echo=TRUE}
+movies%>%
+  filter(rating > 8, Comedy == 1, votes > 100, year > 2000)
+```
+##Use of mutate()
+##mutate(data, new_col = function(oldcol))
+```{r mutate,echo=TRUE}
+movies_with_budget<-filter(movies_df, !is.na(budget))
+head(movies_with_budget)
+mutate(movies_with_budget, costPerMinute = budget/length)%>%
+  select(title, costPerMinute)
+```
+##Use of group_by() & summarize()
+##group_by(data, column_to_group)%>%
+##summarize(function_of_variable)
+```{r,echo=TRUE}
+by_rating<-group_by(movies_df, rating)
+by_rating%>%summarize(n())
+avg_rating_by_year<-group_by(movies_df, year)%>%
+  summarize(avg_rating_by_year = mean(rating))
+head(avg_rating_by_year)
+```
+##Chaining the verbs together
+##let's put it all together in logical fashion,use a sequence of
+##steps to find the most expensive movies per minute of eventual footage
+```{r,echo=TRUE}
+producer_nightmare<-filter(movies_df, !is.na(budget))%>%
+  mutate(costPerMinute = budget/length)%>%
+  arrange(desc(costPerMinute))%>%
+  select(title, costPerMinute)
+head(producer_nightmare,20)
+```
+##The output of a series of "pipes" can also be fed to a "plot"command
+```{r plot,echo=TRUE}
+movies%>%
+  group_by(rating)%>%
+  summarize(n())%>%
+  plot()
+movies%>%
+  group_by(year)%>%
+  summarize(y=mean(rating))%>%
+  with(barplot(y,names.arg=year,main="AVG IMDB Rating by year"))
+```
+
+
+
+
+
