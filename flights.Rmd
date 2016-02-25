@@ -1,0 +1,78 @@
+---
+title: "Flights"
+author: "issa fall"
+date: "December 19, 2015"
+output: html_document
+---
+##NYC flights
+```{r loading,echo=TRUE}
+library(nycflights13)
+library(plyr)
+library(dplyr)
+library(tidyr)
+data(flights)
+head(flights)
+```
+##A subset of the rows of the data frame
+```{r subset,echo=TRUE}
+filter(flights, month == 1, day == 1)
+flights %>%
+  filter(dep_delay < 10)
+flights %>%
+  filter(arr_delay < dep_delay)
+flights %>%
+  filter(hour < 12, arr_delay <= 0)
+```
+##Arrange:reorder a data frame
+```{r reorder,echo=TRUE}
+flights %>%
+  filter(hour < 8)%>%
+  arrange(year, month, day)
+flights %>%
+  arrange(desc(dep_delay))
+```
+##Select:select certain columns from a data frame
+```{r select,echo=TRUE}
+select(flights, year, month, day)
+select(flights, year : day)
+select(flights, -(year : day))
+```
+##Mutate:modify or create columns based on others columns
+```{r mutate,echo=TRUE}
+d<-flights %>%
+  mutate(
+    gain = arr_delay - dep_delay,
+    speed = distance / air_time *60
+  )%>%
+  filter(gain > 0)%>%
+  arrange(desc(speed))
+d%>%
+  select(year, month, day, dest, gain, speed)
+```
+##Summarise:collapse a data frame into on row ...
+```{r summarise,echo=TRUE}
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+flights %>%
+  filter(dep_delay > 0)%>%
+  summarise(arr_delay = mean(arr_delay, na.rm = TRUE))
+```
+##Group_by:group observations by one or more variable
+```{r group_by,echo=TRUE}
+flights %>%
+  group_by(tailnum)%>%
+  summarise(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  )%>%
+  filter(is.finite(delay))%>%
+  arrange(desc(count))
+flights %>%
+  group_by(dest)%>%
+  summarise(
+    planes = n_distinct(tailnum),
+    flights = n()
+  )%>%
+  arrange(desc(flights))
+  
+  
