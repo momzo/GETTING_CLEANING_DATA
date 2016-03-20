@@ -1,0 +1,15 @@
+---
+title: "run"
+author: "issa fall"
+date: "January 3, 2016"
+output: html_document
+---
+
+##Run_analysis
+```{r,echo=TRUE}
+library(dplyr); library(tidyr); library(plyr)
+paths<-dir("specdata", pattern = "\\.csv$", full.names = TRUE)
+names(paths)<-basename(paths)
+dat<-ldply(paths, read.csv, stringsAsFactors =FALSE)
+head(dat)
+head(read.csv(paths[1]))
